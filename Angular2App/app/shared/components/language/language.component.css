@@ -1,0 +1,7 @@
+.langImg, .language {
+    display: inline-block;
+    font-family: Arial;
+}
+.langImg {
+    margin-left: 10px;
+}

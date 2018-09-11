@@ -1,0 +1,21 @@
+.footer {
+    background: orange;
+    width: 100%;
+    padding: 15px;
+    color: white;
+    font-size: 1em;
+}
+.follow {
+    text-align: left;
+    font-family: Arial;
+}
+.copyright {
+    text-align: right;
+    font-family: Arial;
+}
+.Link {
+    text-decoration: underline;
+}
+a {
+    color: white;
+}

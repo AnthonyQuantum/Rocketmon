@@ -1,0 +1,306 @@
+﻿@model IEnumerable<Angular2App.Models.Point>
+@{
+    ViewBag.Title = "Control panel";
+    if (Session["user"] == null)
+    {
+        Response.Redirect("/Home/Enter");
+    }
+}
+
+<style>
+    .block {
+        border: 1px solid black;
+        padding: 15px;
+        margin: 15px;
+    }
+    table {
+        border: 1px solid black;
+        margin: 15px;
+        padding: 5px;
+        border-collapse: collapse;
+    }
+
+    td + td,
+    th + th {
+        border-left: 1px solid black;
+    }
+
+    tr + tr {
+        border-top: 1px solid black;
+    }
+    .row {
+        margin-left: 10px;
+    }
+    .noiseReducer {
+        width: 350px;
+    }
+    .inline {
+        display: inline-block;
+    }
+    #myChart {
+        width: 800px !important;
+        height: 800px !important;
+    }
+    #graphBlock, #listBlock {
+        display: none;
+    }
+</style>
+
+<h1>Hi, @Session["user"]!</h1>
+
+<div class="row">
+    <div class="block files col-lg-12">
+        <h2>Your files:</h2>
+        @{
+            string result = "<br>";
+            string[] files = Directory.GetFiles(Server.MapPath("/Uploads/"));
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (Path.GetFileNameWithoutExtension(files[i]) != "Thumbs" && Path.GetFileNameWithoutExtension(files[i]).Split('-')[0] == Session["user"].ToString())
+                {
+                    result += Path.GetFileNameWithoutExtension(files[i]) + "<br>";
+                }
+            }
+            var output = Html.Raw(result);
+        }
+        <div>@output</div>
+        <h4>Download:</h4>
+        <form id="downloadForm" action="@Url.Action("DownloadFile")">
+            @{
+                result = "<select name='fileSelect'>";
+                var file = "";
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if (Path.GetFileNameWithoutExtension(files[i]) != "Thumbs" && Path.GetFileNameWithoutExtension(files[i]).Split('-')[0] == Session["user"].ToString())
+                    {
+                        file = Path.GetFileNameWithoutExtension(files[i]);
+                        result += "<option value='" + file + "'>" + file + "</option>";
+                    }
+                }
+                result += "</select>";
+                output = Html.Raw(result);
+            }
+            <div>@output</div> <br>
+            <input type="submit" value="Download" />
+        </form>
+    </div>
+
+    <div class="block col-lg-6">
+        <h2>Your points:</h2>
+        <table class="pointTable">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Lat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Lng)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Value)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                if (Session["user"].ToString() == item.Author)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lat)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lng)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Type)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+            }
+
+        </table>
+    </div>
+    </div>
+
+<div class="row">
+    <div class="block">
+        <h2>Dataset:</h2>
+        <form id="chooseFileForm" action="@Url.Action("ChooseFile")">
+            @{
+                result = "<select name='fileSelect'>";
+                file = "";
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if (Path.GetFileNameWithoutExtension(files[i]) != "Thumbs" && Path.GetFileNameWithoutExtension(files[i]).Split('-')[0] == Session["user"].ToString())
+                    {
+                        file = Path.GetFileNameWithoutExtension(files[i]);
+                        result += "<option value='" + file + "'>" + file + "</option>";
+                    }
+                }
+                result += "</select>";
+                output = Html.Raw(result);
+            }
+            <div class="inline">File: @output</div>
+            <input type="submit" value="Choose" class="inline" />
+        </form>
+        <form id="chooseColumnForm" action="@Url.Action("ChooseColumn")">
+            @{
+                result = "<select name='columnSelect'>" + Session["Columns"] + "</select>";
+                output = Html.Raw(result);
+            }
+            <div class="inline">Column: @output</div>
+            <input type="submit" value="Choose" class="inline" />
+        </form>
+
+        <div id="listBlock">
+            <h4>Values: @Session["ColumnO"]</h4>
+            <h4>Result: @Session["ColumnResult"]</h4>
+        </div>
+
+        <h3 class="inline">Visualize:</h3>
+        <input type="button" value="List" onclick="document.getElementById('listBlock').style.display = 'block'" class="inline" />
+        <input type="button" value="Graph" onclick="document.getElementById('graphBlock').style.display = 'block'" class="inline" />
+        <div id="graphBlock">
+            <h1>Graph:</h1>
+            @{ 
+                int[] values = null;
+                if (Session["allPath"] != null && Session["column"] != null)
+                {
+                    int columnNum = 0;
+                    List<Int32> list = new List<Int32>();
+                    using (StreamReader sr = new StreamReader(Session["allPath"].ToString()))
+                    {
+                        string[] col = sr.ReadLine().Split(',');
+                        for (int i = 0; i < col.Length; i++)
+                        {
+                            if (col[i] == Session["column"].ToString())
+                            {
+                                columnNum = i;
+                                //System.Diagnostics.Debug.WriteLine(columnNum);
+                                break;
+                            }
+                        }
+
+                    }
+
+                    using (StreamReader sr = new StreamReader(Session["allPath"].ToString()))
+                    {
+                        sr.ReadLine();
+                        while (!sr.EndOfStream)
+                        {
+                            string[] col = sr.ReadLine().Split(',');
+                            list.Add(Convert.ToInt32(col[columnNum]));
+                            //System.Diagnostics.Debug.WriteLine(col[columnNum]);
+                        }
+                        values = list.ToArray();
+                    }
+                }
+            }
+            <canvas id="myChart" width="400" height="400"></canvas>
+            <script>
+                var labels = [];
+                for (var i = 1; i <= 662; i++) {
+                    labels.push(i);
+                }
+                var columns = @Html.Raw(Json.Encode(values));
+                var columnsResult = @Html.Raw(Json.Encode(Session["ColumnResultArr"]));
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '@Session["column"]',
+                        data: columns,
+                        backgroundColor: [
+                            'rgba(255, 0, 0, 0)'
+                        ],
+                        borderColor: [
+                            'rgba(255,0,0,1)'
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Result',
+                        data: columnsResult,
+                        backgroundColor: [
+                            'rgba(0, 255, 0, 0)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 255, 0, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+            </script>
+        </div>
+        <br>
+        <h3 class="inline">Analyze:</h3>
+        <form id="reduceNoiseForm" action="@Url.Action("ReduceNoise")" class="inline">
+            <input type="submit" value="Reduce noise" />
+        </form>
+    </div>
+</div>
+
+    <!--<div class="row">
+        <div class="block noiseReducer col-lg-6">
+            <h2>Noise Reducer</h2>
+            <form id="reducerForm" action="@Url.Action("ReduceNoise")">
+                @{
+                    result = "<select name='fileSelect'>";
+                    file = "";
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        file = Path.GetFileNameWithoutExtension(files[i]);
+                        result += "<option value='" + file + "'>" + file + "</option>";
+                    }
+                    result += "</select>";
+                    output = Html.Raw(result);
+
+                    var passes = "<select name='passesSelect'>";
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        passes += "<option value='" + i + "'>" + i + "</option>";
+                    }
+                    passes += "</select>";
+                    var passesOut = Html.Raw(passes);
+                }
+                <div>File:</div>
+                <div>@output</div>
+                <div>Passes:</div>
+                <div>@passesOut</div> <br>
+                <input type="submit" value="Reduce Noise" />
+            </form>
+        </div>
+    </div>-->
+
+
+

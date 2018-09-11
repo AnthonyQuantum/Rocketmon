@@ -1,0 +1,14 @@
+.text {
+    font-family: AS;
+    font-size: 2em;
+}
+.container {
+    margin-top: 100px;
+}
+.navbar-mock {
+    height: 125px;
+}
+
+.footer-mock {
+    height: 56px;
+}

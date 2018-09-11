@@ -1,0 +1,16 @@
+#points, #users, #pointslabel, #usersLabel {
+	display: inline-block;
+}
+#points, #users {
+	color: orange;
+}
+#main {
+	
+font-family: AS;
+	font-size: 30px;
+	padding: 10px;
+}
+@font-face {
+    font-family: AS;
+    src: url(/app/../fonts/adv.ttf);
+   }

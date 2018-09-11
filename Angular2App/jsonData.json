@@ -1,0 +1,11 @@
+{
+	"points": [
+		{"lat": 56.487171, "lng": 40.797758, "value": 85},
+		{"lat": 59.487171, "lng": 40.797758, "value": 21},
+		{"lat": 60, "lng": 30, "value": 54}
+	],
+	"users": [
+		{"login": "admin", "password": "12345"},
+		{"login": "user1", "password": "12345"}
+	]
+}

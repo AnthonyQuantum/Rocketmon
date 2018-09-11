@@ -1,0 +1,14 @@
+<div class="navbar-mock"></div>
+<div class="container">
+    <div class="text">{{word1}}</div>
+    <div class="row">
+        <store-panel class="col-lg-4" *ngFor="let thisPanel of products" [panel]="thisPanel"></store-panel>
+    </div>
+
+    <div class="text">{{word2}}</div>
+    <div class="row">
+        <store-panel class="col-lg-4" *ngFor="let thisPanel of services" [panel]="thisPanel"></store-panel>
+    </div>
+</div>
+<div #payElement></div>
+<div class="footer-mock"></div>

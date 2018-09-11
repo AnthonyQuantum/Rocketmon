@@ -1,0 +1,38 @@
+﻿<style type="text/css">
+    @@font-face {
+    font-family: AS;
+    src: url(/app/../fonts/adv.ttf);
+   }
+    .stdtext {
+        font-family: AS;
+        font-size: 20pt !important;
+    }
+    .stat {
+        color: orange;
+    }
+    .inline {
+        display: inline-block;
+    }
+    .thisBlock {
+        background: white !important;
+    }
+</style>
+
+<div class="stdtext thisBlock">
+    @{ 
+        HttpCookie langCookie = new HttpCookie("lang");
+        langCookie = Request.Cookies["lang"];
+        if (langCookie.Value == "us")
+        {
+            ViewBag.WeHave = "Now we have:";
+        }
+        else
+        {
+            ViewBag.WeHave = "У нас уже есть:";
+        }
+
+    }
+    <div>@ViewBag.WeHave</div>
+<div class="inline">Points: <div class="stat inline">@ViewBag.Points</div></div><br>
+<div class="inline">Users: <div class="stat inline">@ViewBag.Users</div></div>
+</div>

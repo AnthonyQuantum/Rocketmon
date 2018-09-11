@@ -1,0 +1,19 @@
+.data {
+    font-family: AS;
+    text-align: left;
+    padding: 10px;
+    font-size: 2em;
+    background: white;
+    box-shadow: 0px 0px 60px rgba(122,122,122,0.3);
+}
+.button-block {
+	text-align: center;
+	color: white;
+}
+.vList {
+	list-style: none;
+	display: inline-block;
+}
+.footer-mock {
+    height: 56px;
+}

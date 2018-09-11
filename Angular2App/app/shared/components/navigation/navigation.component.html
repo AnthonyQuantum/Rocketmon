@@ -1,0 +1,24 @@
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="row">
+            <div class="navbar-header col-lg-6 col-md-6 col-sm-8 col-xs-8">
+                <a class="navbar-brand text" href="/">Rocketmon</a>
+            </div>
+
+            <div class="dropdown hidden-lg hidden-md col-sm-2 col-xs-2">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown">
+                    <img class="car-arrow" src="../../../../img/caret.svg"  />
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="tab" routerLink="/store">{{word1}}</a></li>
+                    <li><a class="tab" routerLink="/updates">{{word2}}</a></li>
+                </ul>
+            </div>
+
+            <div class="tabs col-lg-6 col-md-6 hidden-sm hidden-xs">
+                    <a class="tab text" routerLink="/store">{{word1}}</a>
+                    <a class="tab text" routerLink="/updates">{{word2}}</a>
+            </div>
+        </div>
+    </div>
+</nav>

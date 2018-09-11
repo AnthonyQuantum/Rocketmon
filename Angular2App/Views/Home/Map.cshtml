@@ -1,0 +1,146 @@
+﻿@model IEnumerable<Angular2App.Models.Point>
+
+<div id="map" style="height: 900px; width: 1600px;"></div>
+<script>
+
+    function writeCookie(name, value, days) {
+        var date, expires;
+        if (days) {
+            date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toGMTString();
+        } else {
+            expires = "";
+        }
+        document.cookie = name + "=" + value + expires + "; path=/";
+    }
+
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 56.487171, lng: 40.797758},
+          zoom: 4,
+          zoomable: true,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var infwnd = new google.maps.InfoWindow({content: 'new'});
+        var selectListener = google.maps.event.addListener(map, 'click', function (event) {
+            var location = event.latLng;
+          var mrkr = new google.maps.Marker({
+            position: location,
+            map: map,
+            icon: '../img/selected.png',
+            draggable: false,
+            title: 'Selected point',
+            });
+          writeCookie('SelectedPoint', JSON.stringify(location), 1);
+          google.maps.event.addListener(mrkr, 'click',
+              (function (markr, cnt, infw) {
+                  return function () {
+                      infwnd.setContent(cnt);
+                      infwnd.open(map, markr);
+                  };
+              })(mrkr, JSON.stringify(location), infwnd));
+        });
+
+
+
+        var Markers = [];
+          @{
+              List<int> ValuesList = new List<int>();
+              List<double> LatsList = new List<double>();
+              List<double> LngsList = new List<double>();
+              List<int> IdsList = new List<int>();
+              List<string> AuthorsList = new List<string>();
+              List<string> DatesList = new List<string>();
+              List<string> TypesList = new List<string>();
+          }
+          @foreach (var item in Model)
+          {
+              ValuesList.Add(Convert.ToInt32(item.Value));
+              LatsList.Add(Convert.ToDouble(item.Lat));
+              LngsList.Add(Convert.ToDouble(item.Lng));
+              IdsList.Add(item.Id);
+              AuthorsList.Add(item.Author);
+              DatesList.Add(item.Date);
+              TypesList.Add(item.Type);
+          }
+        @{
+            int[] Values = ValuesList.ToArray();
+            double[] Lats = LatsList.ToArray();
+            double[] Lngs = LngsList.ToArray();
+            int[] Ids = IdsList.ToArray();
+            string[] Authors = AuthorsList.ToArray();
+            string[] Dates = DatesList.ToArray();
+            string[] Types = TypesList.ToArray();
+          }
+        function Escape(str) {
+                var _str = "";
+                var i = 0;
+                while (i < str.length) {
+                    if (str[i] == '&')
+                        i += 6;
+                    else
+                    {
+                        _str += str[i];
+                        i++;
+                    }
+                }
+                return _str + "]";
+        }
+        var Lats = @Json.Encode(Lats);
+        var Lngs = @Json.Encode(Lngs);
+        var Ids = @Json.Encode(Ids);
+        var Authors = decodeURI(Escape("@Json.Encode(Authors)")).substring(1, decodeURI(Escape("@Json.Encode(Authors)")).length - 2).split(",");
+        var Dates = decodeURI(Escape("@Json.Encode(Dates)")).substring(1, decodeURI(Escape("@Json.Encode(Dates)")).length - 2).split(",");
+        var Types = decodeURI(Escape("@Json.Encode(Types)")).substring(1, decodeURI(Escape("@Json.Encode(Types)")).length - 2).split(",");
+        var Vals = @Json.Encode(Values);
+        for (var i = 0; i < @Values.Length; i++) {
+            Markers.push(new Marker(infwnd, Lats[i], Lngs[i], Ids[i], Authors[i], Dates[i], Types[i], Vals[i]));
+        }
+        }
+
+        class Marker {
+            constructor(infwnd, lat, lng, id, author, date, Vtype, value) {
+            this.latt = lat;
+            this.lngt = lng;
+            this.value = value;
+            this.infwnd = infwnd;
+            this.id = id;
+            this.author = author;
+            this.date = date;
+            this.Vtype = Vtype;
+            if (value < 33)
+            {
+              this.type = "Bad";
+              this.image = "../img/bad.png";
+            }
+            else if (value < 66)
+            {
+              this.type = "Normal";
+              this.image = "../img/normal.png";
+            }
+            else
+            {
+              this.type = "Good";
+              this.image = "../img/good.png";
+            }
+            this.content = "Point #" + this.id + "<br>Author: " + this.author + "<br>Date: " + this.date + "<br>Type: " + this.Vtype + "<br><br>" + this.type + " (" + this.value + "%)" +  "<br><br><a href='/Home/Graphs'>See graphs</a>";
+            this.thisMarker = new google.maps.Marker({position: {lat: this.latt, lng: this.lngt}, icon: this.image});
+            this.thisMarker.setMap(map);
+            google.maps.event.addListener(this.thisMarker, 'click',
+            (function(markr, cnt, infw) {
+              return function() {
+                infwnd.setContent(cnt);
+                infwnd.open(map, markr);
+                writeCookie('InfoPoint', JSON.stringify(markr.latLng), 1);
+              };
+            })(this.thisMarker, this.content, infwnd));
+      }
+          }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyqRTdJ8JvN8gvcVul9JAHUvh_kEHs7NY&callback=initMap"
+        async defer>
+</script>

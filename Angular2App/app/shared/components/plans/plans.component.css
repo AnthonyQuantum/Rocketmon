@@ -1,0 +1,12 @@
+.plans {
+	box-shadow: 0px 0px 60px rgba(122,122,122,0.3);
+	font-family: AS;
+	text-align: left;
+	padding: 10px;
+	font-size: 1.5em;
+	background: white;
+    margin-bottom: 60%;
+}
+.footer-mock {
+    height: 56px;
+}

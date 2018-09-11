@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Rocketmon";
+    Session["user"] = "admin";
+}
+<link href="../../css/custom.css" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+    <my-app>
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+        <script>
+            function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+            }
+            return "";
+            }
+            function writeCookie(name, value, days) {
+                var date, expires;
+                if (days) {
+                    date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toGMTString();
+                } else {
+                    expires = "";
+                }
+                document.cookie = name + "=" + value + expires + "; path=/";
+            }
+
+            if (getCookie("lang") == "")
+                writeCookie('lang', 'us', 1);
+        </script>
+    </my-app>

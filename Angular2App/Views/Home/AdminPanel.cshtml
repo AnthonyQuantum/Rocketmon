@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Angular2App.Models.User>
+@{
+
+    ViewBag.Title = "Admin Panel | Rocketmon";
+
+}
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Flat HTML5/CSS3 Login Form</title>
+    <style>
+        .row {
+            margin-left: 10px;
+        }
+        .block {
+            border: 1px solid black;
+            padding: 15px;
+            margin: 15px;
+        }
+        .noiseReducer {
+            width: 350px;
+        }
+        .files {
+            width: 375px;
+        }
+        .users {
+            width: 400px;
+        }
+        table {
+            border: 1px solid black;
+            margin: 15px;
+            padding: 5px;
+            border-collapse: collapse;
+        }
+
+        td + td,
+        th + th {
+            border-left: 1px solid black;
+        }
+
+        tr + tr {
+            border-top: 1px solid black;
+        }
+        .jsonFrame {
+            width: 900px;
+            height: 300px;
+        }
+        </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="block files col-lg-6">
+            <h2>Files:</h2>
+            @{
+                string result = "<br>";
+                string[] files = Directory.GetFiles(Server.MapPath("/Uploads/"));
+                for (int i = 0; i < files.Length; i++)
+                {
+                    result += Path.GetFileNameWithoutExtension(files[i]) + "<br>";
+                }
+                var output = Html.Raw(result);
+            }
+            <div>@output</div>
+            <h4>Download:</h4>
+            <form id="downloadForm" action="@Url.Action("DownloadFile")">
+                @{
+                    result = "<select name='fileSelect'>";
+                    var file = "";
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        file = Path.GetFileNameWithoutExtension(files[i]);
+                        result += "<option value='" + file + "'>" + file + "</option>";
+                    }
+                    result += "</select>";
+                    output = Html.Raw(result);
+                }
+                <div>@output</div> <br>
+                <input type="submit" value="Download" />
+            </form>
+</div>
+
+        
+        <div class="block col-lg-6">
+            <h2>Users:</h2>
+            <table class="userTable">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Login)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PointsSet)
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Login)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PointsSet)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>

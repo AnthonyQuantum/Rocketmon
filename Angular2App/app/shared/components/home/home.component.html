@@ -1,0 +1,25 @@
+<div class="navbar-mock"></div>
+
+ <div class="graph-popup col-lg-4" *ngIf="popup">
+   <img class="close-icon" src="../../../../img/close.png" (click)="popup = !popup" />
+   <iframe frameBorder="0" scrolling="no" src="/Home/Graphs" class="graph col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-12 col-xs-12"></iframe>
+</div>
+
+<quick-overview></quick-overview>
+<iframe frameBorder="0" scrolling="no" src="/Home/Map" class="map col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-12 col-xs-12"></iframe>
+<div class="starter-template">
+    <div class="row menu">
+        <menu-panel class="col-lg-2" *ngFor="let thisPanel of panels" [panel]="thisPanel"></menu-panel>
+        <a href="/Home/Join">
+            <button-standard class="button-block button-std col-lg-2" [inText]="'Join us'!" style="padding: 10px;"></button-standard>
+        </a>
+        <a href="/Home/Launch">
+            <button-standard class="button-block button-std col-lg-2" [inText]="'Launch'!" style="padding: 10px;"></button-standard>
+        </a>
+            <button-standard routerLink="/controlpanel" routerLinkActive="active" class="button-block button-std col-lg-2" [inText]="'Control panel'!" style="padding: 10px;"></button-standard>
+    </div>
+    <div class="row">
+        <router-outlet></router-outlet>
+    </div>
+</div>
+<div class="footer-mock"></div>
